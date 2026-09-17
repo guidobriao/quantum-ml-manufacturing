@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=82"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quantum-ml-manufacturing"
+version = "0.1.0"
+description = "Reproducible manufacturing-data pipelines for classical and quantum machine learning experiments."
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "qiskit==2.5.1",
+    "qiskit-aer==0.17.2",
+    "qiskit-machine-learning==0.9.0",
+    "qiskit-ibm-runtime==0.49.0",
+    "numpy==2.4.6",
+    "scipy==1.17.1",
+    "pandas==3.0.5",
+    "scikit-learn==1.9.0",
+    "matplotlib==3.11.1",
+    "seaborn==0.13.2",
+    "jupyter==1.1.1",
+    "pytest==9.1.1",
+    "PyYAML==6.0.3",
+    "xgboost==3.2.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]

@@ -1,0 +1,98 @@
+version: 1
+seed: 20260914
+frozen_inputs:
+  discovery_sqlite: data/processed/energy_state_discovery.sqlite
+  discovery_sqlite_sha256: 4abc8244a96d1cff52d4794064eef1c6a227021cb82244332eb1764f4729d183
+  common_sqlite: data/processed/common_pipeline.sqlite
+  common_sqlite_sha256: 65c41fd54a1619b4acede6c990b25098ab00460118f80e8dc7586dc056256802
+  segmentation_config: configs/energy_state_discovery.yaml
+  segmentation_config_sha256: 1b480122fe7c9ada20625c67e25d39af7b5c0a362f3468f85012d8e5739f0815
+  inference_logic: src/qml_thesis/energy_state_discovery.py
+  inference_logic_sha256: 0b613dd7ef250376d78481b0c11b30521156c2525e6e861a561450a01f3e8d5b
+target:
+  column: inferred_state
+  excluded_label: unknown
+  pseudo_label_not_ground_truth: true
+features:
+  selected:
+    - duration_seconds
+    - power_mean
+    - power_std
+    - power_slope
+    - flow_mean
+    - pressure_mean
+  quantum_scaling:
+    type: MinMaxScaler
+    feature_range: [0.0, 3.141592653589793]
+    clip: true
+    fit_on: train_only
+split:
+  strategy: chronological_experiment_holdout
+  train_experiments: [Exp20190124, Exp20190320, Exp20190416]
+  validation_experiments: [Exp20190514]
+  test_experiments: [Exp20190617]
+  qml_per_class:
+    train: 20
+    validation: 8
+    test: 12
+  sampling: deterministic_station_balanced_temporal_quantiles
+classical:
+  logistic_regression:
+    C: 1.0
+    class_weight: balanced
+    max_iter: 2000
+  svm:
+    C: 1.0
+    kernel: rbf
+    class_weight: balanced
+  random_forest:
+    n_estimators: 300
+    max_depth: 8
+    class_weight: balanced
+  xgboost:
+    n_estimators: 300
+    max_depth: 5
+    learning_rate: 0.05
+    subsample: 0.9
+    colsample_bytree: 0.9
+    tree_method: hist
+    device: cpu
+quantum:
+  qubits: 6
+  feature_map:
+    name: zz_feature_map
+    reps: 2
+    entanglement: linear
+  qsvc:
+    C_candidates: [0.5, 1.0, 2.0]
+  vqc:
+    ansatz: real_amplitudes
+    ansatz_reps: 1
+    entanglement: linear
+    optimizer: COBYLA
+    ideal_maxiter: 30
+    sampled_maxiter: 20
+    loss: cross_entropy
+  ideal:
+    sampler: QMLSampler_exact
+  finite_shots:
+    shots: [256, 1024]
+    repetitions: 2
+  noisy:
+    fake_backend: FakeJakartaV2
+    shots: 1024
+    repetitions: 2
+    optimization_level: 1
+  kernel_clustering:
+    samples: 56
+    clusters: 2
+    selection: label_free_station_balanced_temporal_quantiles
+outputs:
+  sqlite: data/processed/qml_experiments.sqlite
+  results: results/qml
+  matrices: results/qml/kernel_matrices
+  plots: results/qml/plots
+forbidden:
+  ibm_quantum_runtime_service: true
+  real_backend: true
+  qpu: true

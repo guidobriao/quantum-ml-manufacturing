@@ -1,0 +1,54 @@
+version: 1
+seed: 20260616
+timezone:
+  canonical: UTC
+  derived_view: Europe/Rome
+paths:
+  raw: data/raw
+  manifest: data/raw_manifest.csv
+  archive_changes: data/archive_changes.csv
+  processed: data/processed
+  preprocessing_results: results/preprocessing
+  fusion_results: results/data_fusion
+source_policy:
+  primary_tables:
+    - tblPowerLog
+    - tblOperationLog
+  empty_tables_to_verify:
+    - tblMachineReport
+    - tblSensorsLog
+  prefer_new_dump: true
+  query_role: validation_only
+  workbook_role: documentation_only
+  probe_role: auxiliary_only
+deduplication:
+  key: complete_normalized_row
+  preserve_conflicting_same_resource_timestamp: true
+sessions:
+  boundary_source: tblOperationLog
+  rule: largest_multiplicative_jump_in_upper_tail
+  upper_tail_quantile: 0.95
+  minimum_separation_ratio: 2.0
+  boundary_threshold: geometric_mean_around_largest_tail_jump
+  valid_interval: first_to_last_plc_record_in_session_inclusive
+  synchronized_silence:
+    candidate_top_gaps_per_station: 3
+    minimum_station_fraction: 0.60
+    minimum_station_count: 2
+    minimum_relative_duration_to_experiment_max: 0.20
+    rule: majority_overlap_of_top_station_gaps_then_relative_duration_filter
+fusion:
+  direction: backward
+  tolerance: null
+  grouping_keys:
+    - experiment_id
+    - station_id
+    - session_id
+  primary_series: power_log_canonical
+  power_outside_plc_session_interval: plc_columns_null
+diagnostics:
+  state_age_review_seconds: 1800
+outputs:
+  compressed_csv: true
+  sqlite: true
+  parquet_if_engine_available: true
