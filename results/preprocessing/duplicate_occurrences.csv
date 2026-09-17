@@ -1,0 +1,5 @@
+experiment_id,table,deduplicated_occurrences
+Exp20190320,tblOperationLog,405
+Exp20190320,tblPowerLog,57401
+Exp20190617,tblOperationLog,2650
+Exp20190617,tblPowerLog,87037

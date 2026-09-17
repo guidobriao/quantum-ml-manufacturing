@@ -1,0 +1,34 @@
+table,column,canonical_type,unit,semantic_status,description
+tblMachineReport,ResourceID,string,,confirmed,"Original source identifier, preserved unchanged"
+tblMachineReport,timeStamp,int64,ms since Unix epoch,confirmed,Original Unix epoch timestamp in milliseconds
+tblMachineReport,Busy,boolean,,confirmed,Original SQL field; no semantic transformation
+tblMachineReport,RFIDTagPresent,boolean,,confirmed,Original SQL field; no semantic transformation
+tblMachineReport,Done,boolean,,confirmed,Original SQL field; no semantic transformation
+tblOperationLog,ResourceID,string,,confirmed,"Original source identifier, preserved unchanged"
+tblOperationLog,timeStamp,int64,ms since Unix epoch,confirmed,Original Unix epoch timestamp in milliseconds
+tblOperationLog,Busy,boolean,,confirmed,Original SQL field; no semantic transformation
+tblOperationLog,RFIDTagPresent,boolean,,confirmed,Original SQL field; no semantic transformation
+tblOperationLog,Done,boolean,,confirmed,Original SQL field; no semantic transformation
+tblOperationLog,StationEntryxBG5,boolean,,confirmed,Original SQL field; no semantic transformation
+tblOperationLog,ReadyAtStationxBG1,boolean,,confirmed,PLC field; query export alias WRK maps here
+tblOperationLog,DoneWorkingxBG9,boolean,,confirmed,PLC field observed NULL in examined dumps; not reconstructed
+tblOperationLog,StationExitxBG6,boolean,,confirmed,Original SQL field; no semantic transformation
+tblOperationLog,OperationNo,integer,,confirmed,Original SQL field; no semantic transformation
+tblOperationLog,WorkPlanNo,integer,,confirmed,MES field observed NULL in examined dumps; not reconstructed
+tblOperationLog,OrderNo,integer,,confirmed,Original SQL field; no semantic transformation
+tblOperationLog,StepNo,integer,,confirmed,MES field observed NULL in examined dumps; not reconstructed
+tblOperationLog,CarrierID,integer,,confirmed,Original SQL field; no semantic transformation
+tblOperationLog,iResourceID,string,,confirmed,Original SQL field; no semantic transformation
+tblOperationLog,OrderPosition,integer,,confirmed,Original SQL field; no semantic transformation
+tblOperationLog,PartNumber,integer,,confirmed,Original SQL field; no semantic transformation
+tblPowerLog,ResourceID,string,,confirmed,"Original source identifier, preserved unchanged"
+tblPowerLog,timeStamp,int64,ms since Unix epoch,confirmed,Original Unix epoch timestamp in milliseconds
+tblPowerLog,ActivePowerL1,numeric,W,confirmed,Original SQL field; no semantic transformation
+tblPowerLog,Flow,numeric,l/min,confirmed,Original SQL field; no semantic transformation
+tblPowerLog,Pressure,numeric,atm,confirmed,Original SQL field; no semantic transformation
+tblSensorsLog,ResourceID,string,,confirmed,"Original source identifier, preserved unchanged"
+tblSensorsLog,timeStamp,int64,ms since Unix epoch,confirmed,Original Unix epoch timestamp in milliseconds
+tblSensorsLog,StationEntryxBG5,boolean,,confirmed,Original SQL field; no semantic transformation
+tblSensorsLog,ReadyAtStationxBG1,boolean,,confirmed,PLC field; query export alias WRK maps here
+tblSensorsLog,DoneWorkingxBG9,boolean,,confirmed,PLC field observed NULL in examined dumps; not reconstructed
+tblSensorsLog,StationExitxBG6,boolean,,confirmed,Original SQL field; no semantic transformation

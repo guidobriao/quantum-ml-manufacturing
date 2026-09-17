@@ -1,0 +1,127 @@
+{
+  "generated_at_utc": "2026-08-25T12:19:40.654166+00:00",
+  "python": "3.11.9",
+  "config": "configs/common_pipeline.yaml",
+  "seed": 20260616,
+  "raw_files": 45,
+  "raw_bytes": 163719816,
+  "experiments": [
+    "Exp20190124",
+    "Exp20190320",
+    "Exp20190416",
+    "Exp20190514",
+    "Exp20190617"
+  ],
+  "sql_files": 20,
+  "selected_canonical_dumps": [
+    "Exp20190124/dump_20190124_1035.sql",
+    "Exp20190124/dump_20190124_1102.sql",
+    "Exp20190320/dump_20190320_1641.sql",
+    "Exp20190320/dump_20190320_1718_new.sql",
+    "Exp20190416/dump_20190416_1004.sql",
+    "Exp20190416/dump_20190416_1116_new.sql",
+    "Exp20190416/dump_20190416_1515.sql",
+    "Exp20190416/dump_20190416_1630.sql",
+    "Exp20190416/dump_20190416_1807_new.sql",
+    "Exp20190416/dump_20190416_1844.sql",
+    "Exp20190514/dump_20190514_1122_new.sql",
+    "Exp20190514/dump_20190514_1302_new.sql",
+    "Exp20190617/dump_20190617_1130.sql",
+    "Exp20190617/dump_20190617_1209_new.sql",
+    "Exp20190617/dump_20190617_1429.sql"
+  ],
+  "deletion_state": {
+    "deleted_file_absent": true,
+    "manifest_row_absent": true,
+    "archive_changes_exists": false,
+    "archive_changes_documents_deletion": false
+  },
+  "selected_snapshot_rows": 955596,
+  "canonical_rows": 808103,
+  "deduplicated_occurrences": 147493,
+  "conflict_groups": 0,
+  "power_log_canonical_rows": 773846,
+  "operation_log_canonical_rows": 34257,
+  "fused_rows": 773846,
+  "matched_power_rows": 600503,
+  "unmatched_power_rows": 173343,
+  "join_coverage_percent": 77.59980667988205,
+  "state_age_seconds": {
+    "mean_seconds": 130.18140314536313,
+    "median_seconds": 90.872,
+    "p90_seconds": 279.70380000000006,
+    "p95_seconds": 382.7629,
+    "p99_seconds": 785.9070399999981,
+    "max_seconds": 1205.278
+  },
+  "state_age_review_threshold_seconds": 1800.0,
+  "matches_over_state_age_review_threshold": 0,
+  "synchronized_plc_silence_count": 7,
+  "session_count": 86,
+  "power_rows_outside_plc_intervals": 173343,
+  "sessions_by_experiment": {
+    "Exp20190124": 16,
+    "Exp20190320": 18,
+    "Exp20190416": 20,
+    "Exp20190514": 18,
+    "Exp20190617": 14
+  },
+  "empty_table_rows_across_all_sql_files": {
+    "tblMachineReport": 0,
+    "tblSensorsLog": 0
+  },
+  "required_always_null_columns": {
+    "DoneWorkingxBG9": true,
+    "WorkPlanNo": true,
+    "StepNo": true
+  },
+  "parquet_written": false,
+  "canonical_storage": "SQLite",
+  "companion_exports": [
+    "gzip CSV"
+  ],
+  "plots": [
+    "plots/fusion_Exp20190416_Exp20190416-S30-003.png",
+    "plots/fusion_Exp20190617_Exp20190617-S30-001.png",
+    "plots/fusion_Exp20190514_Exp20190514-S30-003.png",
+    "plots/fusion_Exp20190416_Exp20190416-S30-002.png",
+    "plots/fusion_Exp20190514_Exp20190514-S30-002.png"
+  ],
+  "outputs": {
+    "power_log_canonical": [
+      "power_log_canonical.csv.gz"
+    ],
+    "operation_log_canonical": [
+      "operation_log_canonical.csv.gz"
+    ],
+    "power_operation_fused": [
+      "power_operation_fused.csv.gz"
+    ]
+  },
+  "checks": {
+    "raw_unchanged": true,
+    "new_selected_when_pair_exists": true,
+    "ordinary_counterpart_in_lineage": true,
+    "paired_payloads_equal": true,
+    "fused_row_count_equals_power": true,
+    "power_rows_unique": true,
+    "one_operation_max_per_power": true,
+    "no_future_plc": true,
+    "unmatched_age_is_null": true,
+    "same_experiment_join": true,
+    "same_station_join": true,
+    "same_session_join": true,
+    "operation_sessions_derived_for_every_plc_row": true,
+    "power_outside_plc_intervals_is_unmatched": true,
+    "power_outside_plc_intervals_has_null_plc": true,
+    "plc_intervals_are_ordered": true,
+    "nullable_boolean_restored": true,
+    "nullable_int64_restored": true,
+    "nullable_string_restored": true,
+    "plc_timestamp_is_utc": true,
+    "forbidden_possible_reset_column_absent": true,
+    "forbidden_inferred_state_absent": true,
+    "forbidden_feature_columns_absent": true
+  },
+  "forbidden_steps_performed": []
+}

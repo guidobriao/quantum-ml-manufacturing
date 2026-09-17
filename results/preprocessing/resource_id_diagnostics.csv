@@ -1,0 +1,15 @@
+table,ResourceID_original,resource_id_normalized,station_ids,recognized,ambiguous,row_count
+tblPowerLog,ene1_2:CECC-LK,ene1_2:CECC-LK,[10],True,False,105903
+tblPowerLog,ene2_2:CECC-LK,ene2_2:CECC-LK,[20],True,False,94540
+tblPowerLog,ene3_2:CECC-LK,ene3_2:CECC-LK,[30],True,False,133553
+tblPowerLog,ene5_2:CECC-LK,ene5_2:CECC-LK,[50],True,False,107629
+tblPowerLog,ene6_2:CECC-LK,ene6_2:CECC-LK,[60],True,False,106879
+tblPowerLog,ene7_2:CECC-LK,ene7_2:CECC-LK,[70],True,False,101337
+tblPowerLog,ene8_2:CECC-LK,ene8_2:CECC-LK,[80],True,False,124005
+tblOperationLog,mes10_3:plcManual,mes10_3:plcManual,[10],True,False,6382
+tblOperationLog,mes20_3:plcMagazineFront,mes20_3:plcMagazineFront,[20],True,False,4399
+tblOperationLog,mes30_3:plcDrillingCPS,mes30_3:plcDrillingCPS,[30],True,False,5776
+tblOperationLog,mes50_3:plcRobotAssembly,mes50_3:plcRobotAssembly,[50],True,False,550
+tblOperationLog,mes60_3:plcCameraInspection,mes60_3:plcCameraInspection,[60],True,False,5740
+tblOperationLog,mes70_3:plcMagazineBack,mes70_3:plcMagazineBack,[70],True,False,5695
+tblOperationLog,mes80_3:plcPress,mes80_3:plcPress,[80],True,False,5715

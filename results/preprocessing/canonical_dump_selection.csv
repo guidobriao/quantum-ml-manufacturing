@@ -1,0 +1,16 @@
+experiment_id,canonical_source_file,ordinary_counterpart,selection_reason
+Exp20190124,Exp20190124/dump_20190124_1035.sql,,only ordinary dump available
+Exp20190124,Exp20190124/dump_20190124_1102.sql,,only ordinary dump available
+Exp20190320,Exp20190320/dump_20190320_1641.sql,,only ordinary dump available
+Exp20190320,Exp20190320/dump_20190320_1718_new.sql,Exp20190320/dump_20190320_1718.sql,_new preferred
+Exp20190416,Exp20190416/dump_20190416_1004.sql,,only ordinary dump available
+Exp20190416,Exp20190416/dump_20190416_1116_new.sql,Exp20190416/dump_20190416_1116.sql,_new preferred
+Exp20190416,Exp20190416/dump_20190416_1515.sql,,only ordinary dump available
+Exp20190416,Exp20190416/dump_20190416_1630.sql,,only ordinary dump available
+Exp20190416,Exp20190416/dump_20190416_1807_new.sql,Exp20190416/dump_20190416_1807.sql,_new preferred
+Exp20190416,Exp20190416/dump_20190416_1844.sql,,only ordinary dump available
+Exp20190514,Exp20190514/dump_20190514_1122_new.sql,,only _new available
+Exp20190514,Exp20190514/dump_20190514_1302_new.sql,Exp20190514/dump_20190514_1302.sql,_new preferred
+Exp20190617,Exp20190617/dump_20190617_1130.sql,,only ordinary dump available
+Exp20190617,Exp20190617/dump_20190617_1209_new.sql,Exp20190617/dump_20190617_1209.sql,_new preferred
+Exp20190617,Exp20190617/dump_20190617_1429.sql,,only ordinary dump available

@@ -1,0 +1,34 @@
+table,column,unit,row_count,null_count,null_percent,zero_count,zero_percent,minimum,maximum,value_types
+tblPowerLog,ResourceID,,773846,0,0.0,0,0.0,,,"[""str""]"
+tblPowerLog,timeStamp,ms since Unix epoch,773846,0,0.0,0,0.0,1548321201693.0,1560774589863.0,"[""int64""]"
+tblPowerLog,ActivePowerL1,W,773846,0,0.0,0,0.0,10.928794860839844,91.07776641845703,"[""float64""]"
+tblPowerLog,Flow,l/min,773846,0,0.0,467195,60.37312333461696,0.0,49.74663162231445,"[""float64""]"
+tblPowerLog,Pressure,atm,773846,0,0.0,1831,0.23661038501200496,0.0,6.079016208648682,"[""float64""]"
+tblOperationLog,ResourceID,,34257,0,0.0,0,0.0,,,"[""str""]"
+tblOperationLog,timeStamp,ms since Unix epoch,34257,0,0.0,0,0.0,1548321430283.0,1560774476019.0,"[""int64""]"
+tblOperationLog,Busy,,34257,0,0.0,26023,75.96403654727501,0.0,1.0,"[""bool""]"
+tblOperationLog,RFIDTagPresent,,34257,0,0.0,14164,41.34629418804916,0.0,1.0,"[""bool""]"
+tblOperationLog,Done,,34257,0,0.0,7626,22.26114370785533,0.0,1.0,"[""bool""]"
+tblOperationLog,StationEntryxBG5,,34257,550,1.6055112823656479,30023,87.640482237207,0.0,1.0,"[""bool""]"
+tblOperationLog,ReadyAtStationxBG1,,34257,550,1.6055112823656479,16378,47.80920687742651,0.0,1.0,"[""bool""]"
+tblOperationLog,DoneWorkingxBG9,,34257,34257,100.0,0,0.0,,,[]
+tblOperationLog,StationExitxBG6,,34257,550,1.6055112823656479,29514,86.15465452316315,0.0,1.0,"[""bool""]"
+tblOperationLog,OperationNo,,34257,0,0.0,24034,70.15792392795633,0.0,510.0,"[""int64""]"
+tblOperationLog,WorkPlanNo,,34257,34257,100.0,0,0.0,,,[]
+tblOperationLog,OrderNo,,34257,0,0.0,22115,64.55614910821146,0.0,4465.0,"[""int64""]"
+tblOperationLog,StepNo,,34257,34257,100.0,0,0.0,,,[]
+tblOperationLog,CarrierID,,34257,0,0.0,260,0.758968969845579,0.0,19.0,"[""int64""]"
+tblOperationLog,iResourceID,,34257,0,0.0,0,0.0,0.0,8.0,"[""str""]"
+tblOperationLog,OrderPosition,,34257,0,0.0,22085,64.46857576553697,0.0,6.0,"[""int64""]"
+tblOperationLog,PartNumber,,34257,0,0.0,23920,69.82514522579326,0.0,1224.0,"[""int64""]"
+tblMachineReport,ResourceID,,0,0,,0,,,,[]
+tblMachineReport,timeStamp,ms since Unix epoch,0,0,,0,,,,[]
+tblMachineReport,Busy,,0,0,,0,,,,[]
+tblMachineReport,RFIDTagPresent,,0,0,,0,,,,[]
+tblMachineReport,Done,,0,0,,0,,,,[]
+tblSensorsLog,ResourceID,,0,0,,0,,,,[]
+tblSensorsLog,timeStamp,ms since Unix epoch,0,0,,0,,,,[]
+tblSensorsLog,StationEntryxBG5,,0,0,,0,,,,[]
+tblSensorsLog,ReadyAtStationxBG1,,0,0,,0,,,,[]
+tblSensorsLog,DoneWorkingxBG9,,0,0,,0,,,,[]
+tblSensorsLog,StationExitxBG6,,0,0,,0,,,,[]

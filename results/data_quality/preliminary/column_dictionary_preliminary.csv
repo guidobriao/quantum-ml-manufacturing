@@ -1,0 +1,50 @@
+source,column_or_field,normalized_candidate,type_or_encoding,unit,probable_meaning,confidence,evidence_or_caveat
+SQL,ResourceID,resource_id,string,,Identificatore completo della risorsa,confirmed,Nome e tipo definiti nello schema PostgreSQL
+SQL,timeStamp,timestamp_utc,bigint,ms from Unix epoch,Tempo evento,probable,I valori a 13 cifre ricadono nelle date degli esperimenti; unità non dichiarata nello schema
+SQL,ActivePowerL1,active_power_l1,numeric,W,Potenza attiva fase L1,probable,Il dashboard indica W per Drill station; confermare unità per tutte le risorse
+SQL,Flow,flow,numeric,unknown,Portata del processo,probable,Nome colonna confermato ma unità assente
+SQL,Pressure,pressure,numeric,unknown,Pressione del processo,probable,Nome colonna confermato ma unità assente
+SQL,Busy,busy,boolean,,Risorsa occupata,probable,Nome PLC esplicito; confermare polarità e semantica per stazione
+SQL,RFIDTagPresent,rfid_tag_present,boolean,,Tag RFID presente,probable,Nome PLC esplicito; confermare polarità
+SQL,Done,done,boolean,,Operazione/stato concluso,probable,Confermare il livello e l'evento operativo rappresentato
+SQL,StationEntryxBG5,station_entry,boolean,,Sensore/evento ingresso stazione,probable,Nome PLC esplicito; confermare fronte significativo
+SQL,ReadyAtStationxBG1,ready_at_station,boolean,,Pezzo o risorsa pronta in stazione,probable,Nome PLC esplicito; confermare soggetto e fronte
+SQL,DoneWorkingxBG9,done_working,boolean,,Fine lavorazione,probable,Campo sempre NULL nei 21 dump inventariati
+SQL,StationExitxBG6,station_exit,boolean,,Sensore/evento uscita stazione,probable,Nome PLC esplicito; confermare fronte significativo
+SQL,OperationNo,operation_no,integer,,Codice operazione,probable,Nome esplicito; valori e codifica richiedono dizionario MES
+SQL,WorkPlanNo,work_plan_no,integer,,Codice piano di lavoro,probable,Campo sempre NULL nei dump inventariati
+SQL,OrderNo,order_no,integer,,Numero ordine,probable,Nome esplicito; confermare 0 come assenza o valore valido
+SQL,StepNo,step_no,integer,,Numero fase,probable,Campo sempre NULL nei dump inventariati
+SQL,CarrierID,carrier_id,integer,,Identificatore carrier,probable,Nome esplicito; confermare 0 come assenza
+SQL,iResourceID,i_resource_id,string,,Identificatore risorsa interno o numerico,probable,Contiene valori numerici serializzati come stringa
+SQL,OrderPosition,order_position,integer,,Posizione nell'ordine,probable,Nome esplicito; confermare 0 come assenza
+SQL,PartNumber,part_number,integer,,Codice parte,probable,Nome esplicito; confermare 0 come assenza
+query,dateandtime,timestamp_utc,text,UTC,Timestamp formattato dall'epoch SQL,confirmed,Corrispondenza verificata su righe con timestamp identico
+query,id,resource_station_id,integer,,Numero stazione estratto da ResourceID eneN/mesN,probable,Corrispondenza osservata 10-80; serve tabella di mapping approvata
+query,prs,pressure,numeric,unknown,Pressure,confirmed,Allineamento con tblPowerLog
+query,flw,flow,numeric,unknown,Flow,confirmed,Allineamento con tblPowerLog
+query,pwr,active_power_l1,numeric,W probable,ActivePowerL1,confirmed,Allineamento con tblPowerLog; unità da confermare
+query,bsy,busy,text flag,,Busy vero se mostra BSY; vuoto apparentemente falso,probable,Confronto puntuale con righe SQL
+query,rfd,rfid_tag_present,text flag,,RFIDTagPresent vero se mostra RFD,probable,Confronto puntuale con righe SQL
+query,dne,done,text flag,,Done vero se mostra DNE,probable,Confronto puntuale con righe SQL
+query,inp,station_entry,text flag,,StationEntryxBG5 vero se mostra INP,confirmed,Confronto puntuale con righe SQL
+query,wrk,ready_at_station,text flag,,ReadyAtStationxBG1 vero se mostra WRK,confirmed,Confronto su timestamp 1553093134004; non è DoneWorking
+query,out,station_exit,text flag,,StationExitxBG6 vero se mostra OUT,confirmed,Confronto puntuale con righe SQL
+query,ord,order_no,integer,,OrderNo,confirmed,Allineamento posizionale verificato con righe SQL
+query,pno,order_position,integer,,OrderPosition,confirmed,Allineamento posizionale verificato con righe SQL
+query,car,carrier_id,integer,,CarrierID,confirmed,Allineamento posizionale verificato con righe SQL
+query,wpl,work_plan_no,integer,,WorkPlanNo,confirmed,Sempre vuoto come il corrispondente campo SQL
+query,stp,step_no,integer,,StepNo,confirmed,Sempre vuoto come il corrispondente campo SQL
+query,opn,operation_no,integer,,OperationNo,confirmed,Allineamento posizionale verificato con righe SQL
+query,prt,part_number,integer,,PartNumber,confirmed,Allineamento posizionale verificato con righe SQL
+probe,order,order_no_candidate,integer,,Ordine associato al segnale,probable,Confermare se coincide sempre con OrderNo MES
+probe,sensor,sensor_state,boolean,,Stato del sensore letto via OPC UA,probable,Occorre identificare fisicamente line1 e line2
+probe,timestamp,timestamp_utc,ISO-8601,UTC,Tempo evento,confirmed,Suffisso Z esplicito
+probe,timestampms,timestamp_ms,integer,ms from Unix epoch,Tempo evento in millisecondi,confirmed,Corrisponde al campo timestamp ISO
+probe,topic,sensor_topic,string,,Canale Res 30 line1 o line2,confirmed,Significato fisico delle due linee da confermare
+DataLogger,PrimaryKey,primary_key,integer,,Chiave record OPC UA,probable,Workbook DataLogger
+DataLogger,DataType,data_type,hex/string,,Tipo OPC UA,probable,Valori come 0x0001
+DataLogger,Value,value,boolean/numeric,,Valore registrato,probable,Occorre conoscere il nodo OPC UA sorgente
+DataLogger,StatusCode,status_code,hex,,Qualità/status OPC UA,probable,Valori come 0x00000000
+DataLogger,SourceTimeStamp,source_timestamp_utc,ISO-8601,UTC,Timestamp sorgente OPC UA,confirmed,Intestazione esplicita
+DataLogger,ServerTimeStamp,server_timestamp_utc,ISO-8601,UTC,Timestamp server OPC UA,confirmed,Intestazione esplicita
