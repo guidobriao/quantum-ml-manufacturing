@@ -196,3 +196,130 @@ def extract_features(segmented: pd.DataFrame, segmentation_type: str, config_nam
 
 # TODO(phase-2): label projection onto fixed windows with purity threshold,
 # using plc_state_machine.classify_frame; duration distributions per state.
+
+# ===================== phase-2 additions =====================
+import yaml
+
+from .common_io import _source_connection, _stable_segment_id
+from .plc_state_machine import classify_frame, STATE_ORDER, IDLE_STATES
+
+
+def load_fused(sqlite_path: Path) -> pd.DataFrame:
+    connection = _source_connection(Path(sqlite_path))
+    try:
+        return pd.read_sql_query("SELECT * FROM power_operation_fused", connection)
+    finally:
+        connection.close()
+
+
+def window_segment_ids(fused: pd.DataFrame, duration_seconds: int, config_name: str) -> pd.Series:
+    """Fixed non-overlapping windows anchored at each session's first power timestamp."""
+    out = pd.Series(index=fused.index, dtype="string")
+    grouped = fused.groupby(["experiment_id", "station_id", "session_id"], sort=False)
+    for (experiment, station, session), index in grouped.groups.items():
+        times = fused.loc[index, "timestamp_epoch_ms_original"].astype("int64")
+        window_index = ((times - times.min()) // (duration_seconds * 1000)).astype(int)
+        out.loc[index] = [
+            _stable_segment_id(config_name, experiment, int(station), session, int(i))
+            for i in window_index
+        ]
+    return out
+
+
+def project_labels(fused: pd.DataFrame, segment_ids: pd.Series,
+                   purity_threshold: float, minimum_known_fraction: float) -> pd.DataFrame:
+    """Project per-row PLC states onto fixed windows by majority + purity."""
+    work = pd.DataFrame({"segment_id": segment_ids, "plc_state": fused["plc_state"]})
+    counts = work.groupby(["segment_id", "plc_state"]).size().rename("n").reset_index()
+    totals = counts.groupby("segment_id")["n"].sum().rename("total")
+    counts = counts.merge(totals, on="segment_id")
+    known = counts[counts["plc_state"] != "unknown"].groupby("segment_id")["n"].sum()
+    counts = counts.merge(known.rename("known"), on="segment_id", how="left")
+    counts["known"] = counts["known"].fillna(0)
+    counts["purity"] = counts["n"] / counts["total"]
+    counts["known_fraction"] = counts["known"] / counts["total"]
+    counts = counts.sort_values("n", ascending=False).drop_duplicates("segment_id")
+
+    def _label(row):
+        if row["known_fraction"] < minimum_known_fraction:
+            return "unknown"
+        if row["plc_state"] == "unknown":
+            return "unknown"
+        return row["plc_state"] if row["purity"] >= purity_threshold else "mixed"
+
+    counts["inferred_state"] = counts.apply(_label, axis=1)
+    return counts[["segment_id", "plc_state", "n", "total", "purity",
+                   "known_fraction", "inferred_state"]]
+
+
+def state_segments(fused: pd.DataFrame) -> pd.DataFrame:
+    """Run-length segments of constant plc_state within experiment/station/session."""
+    ordered = fused.sort_values(
+        ["experiment_id", "station_id", "session_id", "timestamp_epoch_ms_original"]
+    ).copy()
+    keys = ordered[["experiment_id", "station_id", "session_id"]]
+    state_change = (ordered["plc_state"] != ordered["plc_state"].shift()) \
+        | (keys != keys.shift()).any(axis=1)
+    ordered["state_segment"] = state_change.cumsum()
+    segments = ordered.groupby("state_segment").agg(
+        experiment_id=("experiment_id", "first"),
+        station_id=("station_id", "first"),
+        session_id=("session_id", "first"),
+        plc_state=("plc_state", "first"),
+        start_ms=("timestamp_epoch_ms_original", "min"),
+        end_ms=("timestamp_epoch_ms_original", "max"),
+        n_rows=("plc_state", "size"),
+    ).reset_index(drop=True)
+    segments["duration_seconds"] = (segments["end_ms"] - segments["start_ms"]) / 1000.0
+    return segments
+
+
+def duration_statistics(segments: pd.DataFrame, minimum_dwell_seconds: float) -> pd.DataFrame:
+    """Duration distribution per station x state, raw and dwell-filtered."""
+    kept = segments[segments["duration_seconds"] >= minimum_dwell_seconds]
+
+    def _stats(frame: pd.DataFrame, suffix: str) -> pd.DataFrame:
+        return (frame.groupby(["station_id", "plc_state"])["duration_seconds"]
+                .agg(n="size", median="median", p25=lambda s: s.quantile(0.25),
+                     p75=lambda s: s.quantile(0.75), p90=lambda s: s.quantile(0.90),
+                     mean="mean", minimum="min", maximum="max")
+                .reset_index().assign(statistics=suffix))
+
+    return pd.concat([_stats(segments, "raw"),
+                      _stats(kept, f"dwell>={minimum_dwell_seconds}s")], ignore_index=True)
+
+
+def run(config_path: Path) -> dict[str, object]:
+    with config_path.open(encoding="utf-8") as stream:
+        config = yaml.safe_load(stream)
+    window_seconds = config["windowing"]["duration_seconds"]
+    purity = config["projection"]["purity_threshold"]
+    min_known = config["projection"]["minimum_known_fraction"]
+    min_dwell = config["segments"]["minimum_dwell_seconds"]
+
+    fused = load_fused(Path(config["source"]["sqlite"]))
+    fused = fused[fused["join_matched"] == 1].copy()
+    fused["plc_state"] = classify_frame(fused)
+
+    all_windows, features_by_width = [], {}
+    for width in window_seconds:
+        name = f"gt_fixed_{width}s"
+        segment_ids = window_segment_ids(fused, width, name)
+        fused = fused.assign(segment_id=segment_ids)
+        projected = project_labels(fused, segment_ids, purity, min_known)
+        features_by_width[width] = extract_features(fused, "fixed", name)
+        all_windows.append(projected.assign(window_seconds=width))
+
+    segments = state_segments(fused.drop(columns=["segment_id"]))
+    stats = duration_statistics(segments, min_dwell)
+
+    output = Path(config["outputs"]["sqlite"])
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with sqlite3.connect(output) as connection:
+        pd.concat(all_windows, ignore_index=True).to_sql("gt_windows", connection, index=False)
+        segments.to_sql("gt_state_segments", connection, index=False)
+        stats.to_sql("gt_duration_stats", connection, index=False)
+        for width, features in features_by_width.items():
+            features.to_sql(f"gt_features_{width}s", connection, index=False)
+    return {"windows": int(sum(len(w) for w in all_windows)),
+            "state_segments": int(len(segments))}

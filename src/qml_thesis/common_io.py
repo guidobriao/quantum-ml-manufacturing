@@ -112,21 +112,23 @@ def load_segments(path: Path, features: list[str]) -> pd.DataFrame:
 
 
 def assign_temporal_split(frame: pd.DataFrame, split_config: dict[str, Any]) -> pd.DataFrame:
-    sets = {
-        "train": set(split_config["train_experiments"]),
-        "validation": set(split_config["validation_experiments"]),
-        "test": set(split_config["test_experiments"]),
-    }
-    result = frame.copy()
-    result["split"] = pd.NA
-    for name, experiments in sets.items():
-        result.loc[result["experiment_id"].isin(experiments), "split"] = name
-    if result["split"].isna().any():
-        raise ValueError("Every segment must belong to exactly one chronological experiment split")
-    result["target"] = result["inferred_state"].map(LABEL_MAP)
-    result["supervised_eligible"] = result["target"].notna()
-    return result
+    """Assign train/validation/test by whole experiment (chronological holdout).
 
+    Adds a `split` column; does NOT touch any target column. Target handling
+    is the caller's responsibility (regression or classification).
+    """
+    sets = {
+        experiment: "train" for experiment in split_config["train_experiments"]
+    }
+    sets.update({experiment: "validation"
+                 for experiment in split_config["validation_experiments"]})
+    sets.update({experiment: "test" for experiment in split_config["test_experiments"]})
+    result = frame.copy()
+    result["split"] = result["experiment_id"].map(sets).astype("string")
+    unassigned = result["split"].isna().sum()
+    if unassigned:
+        raise ValueError(f"{unassigned} rows with unknown experiment_id; check split config")
+    return result
 
 def _temporal_quantiles(group: pd.DataFrame, count: int) -> pd.Index:
     ordered = group.sort_values(["segment_start_epoch_ms", "segment_id"])

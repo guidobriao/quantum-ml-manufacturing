@@ -1,0 +1,60 @@
+version: 1
+seed: 20260915
+source:
+  ground_truth_sqlite: data/processed/ground_truth.sqlite
+  common_sqlite: data/processed/common_pipeline.sqlite
+  common_sqlite_sha256: 65c41fd54a1619b4acede6c990b25098ab00460118f80e8dc7586dc056256802
+dataset:
+  minimum_dwell_seconds: 1.0
+features:
+  lookback_seconds: [1, 10]
+  classical_all:
+    - activepowerl1_1s_mean
+    - activepowerl1_1s_std
+    - activepowerl1_10s_mean
+    - activepowerl1_10s_std
+    - flow_1s_mean
+    - flow_10s_mean
+    - pressure_1s_mean
+    - pressure_10s_mean
+    - n_samples_1s
+    - prev_duration
+    - time_since_processing_s
+    - cycles_before
+    - station_id
+    - hour_of_day
+    - state_age_seconds
+    - OperationNo
+    - OrderNo
+    - PartNumber
+  quantum_selected:
+    - activepowerl1_1s_mean
+    - activepowerl1_10s_mean
+    - flow_10s_mean
+    - pressure_10s_mean
+    - prev_duration
+    - time_since_processing_s
+split:
+  strategy: chronological_experiment_holdout
+  train_experiments: [Exp20190124, Exp20190320, Exp20190416]
+  validation_experiments: [Exp20190514]
+  test_experiments: [Exp20190617]
+sampling:
+  per_station: 45
+classical:
+  svr: {C: 1.0, epsilon: 0.1, kernel: rbf}
+  random_forest: {n_estimators: 300, max_depth: 8}
+  xgboost: {n_estimators: 300, max_depth: 5, learning_rate: 0.05,
+            tree_method: hist, device: cpu}
+quantum:
+  feature_map: {reps: 2, entanglement: linear}
+  vqr:
+    maxiter: 30
+  qsvr:
+    C_candidates: [0.5, 1.0, 2.0]
+    epsilon_candidates: [0.05, 0.1, 0.2]
+outputs:
+  sqlite: data/processed/idle_duration.sqlite
+  results: results/idle_duration
+decision:
+  thresholds_seconds: [28, 60, 120]

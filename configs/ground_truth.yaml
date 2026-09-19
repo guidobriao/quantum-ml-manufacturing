@@ -1,0 +1,16 @@
+version: 1
+seed: 20260915
+source:
+  sqlite: data/processed/common_pipeline.sqlite
+  sqlite_sha256: 65c41fd54a1619b4acede6c990b25098ab00460118f80e8dc7586dc056256802
+windowing:
+  duration_seconds: [1, 2, 5]
+  overlap_fraction: 0.0
+projection:
+  purity_threshold: 0.8
+  minimum_known_fraction: 0.5
+segments:
+  minimum_dwell_seconds: 1.0
+outputs:
+  sqlite: data/processed/ground_truth.sqlite
+  results: results/ground_truth

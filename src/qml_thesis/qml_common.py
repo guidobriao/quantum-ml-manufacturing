@@ -55,7 +55,8 @@ DISCOVERY_FEATURES = [
 ]
 
 
-LABEL_MAP = {"idle_ready": 0, "loading_unloading_transfer": 1}
+LABEL_MAP = {"idle_ready": 0, "waiting_carrier": 1,
+             "transfer_transient": 2, "processing": 3}
 FORMULAS = {
     "duration_seconds": "(segment_end_epoch_ms - segment_start_epoch_ms) / 1000",
     "power_mean": "mean(ActivePowerL1)",
@@ -74,19 +75,20 @@ REASONS = {
 }
 
 
-def supervised_qml_sample(frame: pd.DataFrame, counts: dict[str, int]) -> pd.DataFrame:
-    selected: list[int] = []
-    for split, per_class in counts.items():
-        for target in sorted(LABEL_MAP.values()):
-            population = frame[(frame["split"] == split) & (frame["target"] == target)]
-            stations = sorted(population["station_id"].unique())
-            base, remainder = divmod(int(per_class), len(stations))
-            for position, station in enumerate(stations):
-                quota = base + int(position < remainder)
-                selected.extend(_temporal_quantiles(population[population["station_id"] == station], quota).tolist())
-    result = frame.loc[sorted(set(selected))].copy()
-    result["qml_selected"] = True
-    return result.sort_values(["split", "segment_start_epoch_ms", "segment_id"]).reset_index(drop=True)
+def supervised_qml_sample(frame: pd.DataFrame, counts: dict[str, int],
+                          label_column: str = "state_4") -> pd.DataFrame:
+    """Deterministic station-balanced temporal-quantile sample per label,
+    over the labels actually present in the frame (phase-2: 4 classes)."""
+    import numpy as np
+    selected: list = []
+    for split, count_per_class in counts.items():
+        part = frame[frame["split"] == split]
+        for label in sorted(part[label_column].unique()):
+            group = part[part[label_column] == label]
+            for _, station_group in group.groupby("station_id", sort=False):
+                quota = max(1, count_per_class // station_group["station_id"].nunique())
+                selected.extend(_temporal_quantiles(station_group, quota))
+    return frame.loc[sorted(set(selected))]
 
 
 def label_free_sample(frame: pd.DataFrame, count: int) -> pd.DataFrame:

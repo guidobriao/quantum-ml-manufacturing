@@ -1,0 +1,20 @@
+version: 1
+seed: 20260915
+source:
+  ground_truth_sqlite: data/processed/ground_truth.sqlite
+  ground_truth_sqlite_sha256: 1d47f7f524cf0e067514ca1026ab8b29a16642cb0d2c333dc2acca9cb1ec4369
+features:
+  energy: [power_mean, power_std, power_slope, power_range, flow_mean, pressure_mean]
+split:
+  strategy: chronological_experiment_holdout
+  train_experiments: [Exp20190124, Exp20190320, Exp20190416]
+  validation_experiments: [Exp20190514]
+  test_experiments: [Exp20190617]
+sampling:
+  unsupervised_n: 400
+  supervised_per_class: {train: 15, validation: 8, test: 12}
+clustering:
+  k_candidates: [2, 4]
+outputs:
+  sqlite: data/processed/parallel_experiment.sqlite
+  results: results/parallel
